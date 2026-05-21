@@ -15,6 +15,8 @@ function Dashboard() {
             <h1>Cultural Heritage Dashboard</h1>
             <p>Welcome to the system</p>
 
+            <button onClick={() => navigate("/add-heritage")}>Add Heritage Record</button>
+            <button onClick={() => navigate("/heritage-records")}>View Heritage Records</button>
             <button onClick={handleLogout}>Logout</button>
         </div>
     );
