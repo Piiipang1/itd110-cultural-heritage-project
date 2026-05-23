@@ -5,6 +5,8 @@ import Dashboard from "./pages/Dashboard";
 import AddHeritage from "./pages/AddHeritage";
 import HeritageRecords from "./pages/HeritageRecords";
 import EditHeritage from "./pages/EditHeritage";
+import Custodians from "./pages/Custodians";
+import Festivals from "./pages/Festivals";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="/add-heritage" element={<AddHeritage />} />
         <Route path="/heritage-records" element={<HeritageRecords />} />
         <Route path="/edit-heritage/:id" element={<EditHeritage />} />
+        <Route path="/custodians" element={<Custodians />} />
+        <Route path="/festivals" element={<Festivals />} />
       </Routes>
     </BrowserRouter>
   );

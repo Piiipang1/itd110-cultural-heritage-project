@@ -1,48 +1,112 @@
 import { useEffect, useMemo, useState } from "react";
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, writeBatch } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 import { Link } from "react-router-dom";
 import type { HeritageItem } from "../types/HeritageItem";
+import type { Custodian } from "../types/Custodian";
+import type { Festival } from "../types/Festival";
 
 function HeritageRecords() {
   const [records, setRecords] = useState<HeritageItem[]>([]);
+  const [custodians, setCustodians] = useState<Custodian[]>([]);
+  const [festivals, setFestivals] = useState<Festival[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [provinceFilter, setProvinceFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
-  const fetchRecords = async () => {
+  const fetchData = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, "heritageItems"));
-      const data = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as HeritageItem[];
+      const itemsSnap = await getDocs(collection(db, "heritageItems"));
+      const custSnap = await getDocs(collection(db, "custodians"));
+      const festSnap = await getDocs(collection(db, "festivals"));
 
-      setRecords(data);
+      setRecords(
+        itemsSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as HeritageItem[]
+      );
+
+      setCustodians(
+        custSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Custodian[]
+      );
+
+      setFestivals(
+        festSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Festival[]
+      );
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    const confirmDelete = confirm("Are you sure you want to delete this record?");
+    const confirmDelete = confirm("Are you sure you want to delete this record? This will also clean up references to this item.");
     if (!confirmDelete) return;
 
-    await deleteDoc(doc(db, "heritageItems", id));
-    fetchRecords();
+    try {
+      await deleteDoc(doc(db, "heritageItems", id));
+
+      const batch = writeBatch(db);
+      let updatedCount = 0;
+
+      records.forEach((record) => {
+        if (record.id !== id && Array.isArray(record.relatedHeritageIds) && record.relatedHeritageIds.includes(id)) {
+          const newRelated = record.relatedHeritageIds.filter((rid) => rid !== id);
+          batch.update(doc(db, "heritageItems", record.id!), {
+            relatedHeritageIds: newRelated,
+          });
+          updatedCount++;
+        }
+      });
+
+      if (updatedCount > 0) {
+        await batch.commit();
+      }
+
+      await fetchData();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to delete record.");
+    }
   };
 
   useEffect(() => {
-    const loadRecords = async () => {
-      await fetchRecords();
-    };
-
-    void loadRecords();
+    void fetchData();
   }, []);
+
+  const custodianMap = useMemo(() => {
+    const map = new Map<string, string>();
+    custodians.forEach((c) => {
+      if (c.id) map.set(c.id, c.name);
+    });
+    return map;
+  }, [custodians]);
+
+  const festivalMap = useMemo(() => {
+    const map = new Map<string, string>();
+    festivals.forEach((f) => {
+      if (f.id) map.set(f.id, f.name);
+    });
+    return map;
+  }, [festivals]);
+
+  const heritageMap = useMemo(() => {
+    const map = new Map<string, string>();
+    records.forEach((r) => {
+      if (r.id) map.set(r.id, r.name);
+    });
+    return map;
+  }, [records]);
 
   const uniqueValues = useMemo(() => {
     const types = new Set<string>();
@@ -91,6 +155,9 @@ function HeritageRecords() {
       <div style={{ marginBottom: "1.5rem", display: "flex", gap: "1rem", flexWrap: "wrap" }}>
         <Link to="/add-heritage">
           <button>Add New Record</button>
+        </Link>
+        <Link to="/dashboard">
+          <button>Back to Dashboard</button>
         </Link>
         <button type="button" onClick={resetFilters}>
           Clear / Reset Filters
@@ -169,6 +236,9 @@ function HeritageRecords() {
               <th>Province</th>
               <th>Municipality</th>
               <th>Status</th>
+              <th>Custodian</th>
+              <th>Linked Festivals</th>
+              <th>Related Items</th>
               <th>Latitude</th>
               <th>Longitude</th>
               <th>Image</th>
@@ -176,30 +246,43 @@ function HeritageRecords() {
             </tr>
           </thead>
           <tbody>
-            {filteredRecords.map((record) => (
-              <tr key={record.id}>
-                <td>{record.name}</td>
-                <td>{record.type}</td>
-                <td>{record.province}</td>
-                <td>{record.municipality}</td>
-                <td>{record.preservationStatus}</td>
-                <td>{record.latitude}</td>
-                <td>{record.longitude}</td>
-                <td>
-                  {record.imageUrl ? (
-                    <img src={record.imageUrl} alt={record.name} width="80" />
-                  ) : (
-                    "No image"
-                  )}
-                </td>
-                <td>
-                  <Link to={`/edit-heritage/${record.id}`}>
-                    <button>Edit</button>
-                  </Link>
-                  <button onClick={() => handleDelete(record.id!)}>Delete</button>
-                </td>
-              </tr>
-            ))}
+            {filteredRecords.map((record) => {
+              const custodianName = record.custodianId ? custodianMap.get(record.custodianId) : null;
+              const recordFestivals = Array.isArray(record.festivalIds)
+                ? record.festivalIds.map((fid) => festivalMap.get(fid)).filter(Boolean)
+                : [];
+              const recordRelated = Array.isArray(record.relatedHeritageIds)
+                ? record.relatedHeritageIds.map((rid) => heritageMap.get(rid)).filter(Boolean)
+                : [];
+
+              return (
+                <tr key={record.id}>
+                  <td>{record.name}</td>
+                  <td>{record.type}</td>
+                  <td>{record.province}</td>
+                  <td>{record.municipality}</td>
+                  <td>{record.preservationStatus}</td>
+                  <td>{custodianName || "—"}</td>
+                  <td>{recordFestivals.join(", ") || "—"}</td>
+                  <td>{recordRelated.join(", ") || "—"}</td>
+                  <td>{record.latitude}</td>
+                  <td>{record.longitude}</td>
+                  <td>
+                    {record.imageUrl ? (
+                      <img src={record.imageUrl} alt={record.name} width="80" />
+                    ) : (
+                      "No image"
+                    )}
+                  </td>
+                  <td>
+                    <Link to={`/edit-heritage/${record.id}`}>
+                      <button>Edit</button>
+                    </Link>
+                    <button onClick={() => handleDelete(record.id!)}>Delete</button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}
