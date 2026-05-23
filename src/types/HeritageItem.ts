@@ -12,4 +12,7 @@ export type HeritageItem = {
     imageUrl: string;
     createdBy?: string;
     createdAt?: any;
+    custodianId?: string;
+    festivalIds?: string[];
+    relatedHeritageIds?: string[];
 };
