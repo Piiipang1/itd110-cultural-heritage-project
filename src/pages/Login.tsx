@@ -52,6 +52,11 @@ function Login() {
             <p>
                 No account yet? <Link to="/Register">Register</Link>
             </p>
+            <div style={{ marginTop: "1.5rem", borderTop: "1px solid #ddd", paddingTop: "1rem", textAlign: "center" }}>
+                <Link to="/public-listings" style={{ fontSize: "1rem", fontWeight: "bold", textDecoration: "none", color: "#556B2F" }}>
+                    🏛️ Explore Public Heritage Directory
+                </Link>
+            </div>
         </div>
     );
 }
