@@ -19,6 +19,7 @@ function Dashboard() {
             <button onClick={() => navigate("/heritage-records")}>View Heritage Records</button>
             <button onClick={() => navigate("/custodians")}>Add Custodians</button>
             <button onClick={() => navigate("/festivals")}>Manage Festivals</button>
+            <button onClick={() => navigate("/reports")}>View Reports Dashboard</button>
             <button onClick={handleLogout}>Logout</button>
         </div>
     );

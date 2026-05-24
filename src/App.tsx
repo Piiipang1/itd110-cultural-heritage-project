@@ -7,6 +7,8 @@ import HeritageRecords from "./pages/HeritageRecords";
 import EditHeritage from "./pages/EditHeritage";
 import Custodians from "./pages/Custodians";
 import Festivals from "./pages/Festivals";
+import PublicListings from "./pages/PublicListings";
+import Reports from "./pages/Reports";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/edit-heritage/:id" element={<EditHeritage />} />
         <Route path="/custodians" element={<Custodians />} />
         <Route path="/festivals" element={<Festivals />} />
+        <Route path="/public-listings" element={<PublicListings />} />
+        <Route path="/reports" element={<Reports />} />
       </Routes>
     </BrowserRouter>
   );
