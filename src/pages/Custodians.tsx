@@ -1,8 +1,16 @@
 import { useEffect, useState, useMemo } from "react";
-import { collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, writeBatch } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  serverTimestamp,
+  writeBatch,
+} from "firebase/firestore";
 import { db, auth } from "../firebase/firebaseConfig";
-import { Link } from "react-router-dom";
 import type { Custodian } from "../types/Custodian";
+import { FaSearch, FaTrash, FaUsers } from "react-icons/fa";
 
 export default function Custodians() {
   const [custodians, setCustodians] = useState<Custodian[]>([]);
@@ -28,8 +36,7 @@ export default function Custodians() {
         ...doc.data(),
       })) as Custodian[];
       setCustodians(list);
-    } catch (err: any) {
-      console.error(err);
+    } catch {
       setMessage("Failed to fetch custodians.");
     } finally {
       setLoading(false);
@@ -40,115 +47,136 @@ export default function Custodians() {
     void fetchCustodians();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!formData.name || !formData.type) {
-      setMessage("Please fill in required fields (Name and Type).");
+      setMessage("Please fill in required fields.");
       return;
     }
 
-    try {
-      await addDoc(collection(db, "custodians"), {
-        ...formData,
-        createdBy: auth.currentUser?.uid,
-        createdAt: serverTimestamp(),
-      });
-      setMessage("Custodian added successfully!");
-      setFormData({
-        name: "",
-        type: "",
-        contactEmail: "",
-        contactPhone: "",
-        address: "",
-        description: "",
-        establishedYear: "",
-      });
-      void fetchCustodians();
-    } catch (err: any) {
-      console.error(err);
-      setMessage("Error adding custodian: " + err.message);
-    }
+    await addDoc(collection(db, "custodians"), {
+      ...formData,
+      createdBy: auth.currentUser?.uid,
+      createdAt: serverTimestamp(),
+    });
+
+    setMessage("Custodian added successfully!");
+    setFormData({
+      name: "",
+      type: "",
+      contactEmail: "",
+      contactPhone: "",
+      address: "",
+      description: "",
+      establishedYear: "",
+    });
+
+    void fetchCustodians();
   };
 
   const handleDelete = async (id: string) => {
-    const confirmDelete = confirm(
-      "Are you sure you want to delete this custodian? This will also remove references on associated heritage records."
-    );
+    const confirmDelete = confirm("Delete this custodian?");
     if (!confirmDelete) return;
 
-    try {
-      await deleteDoc(doc(db, "custodians", id));
+    await deleteDoc(doc(db, "custodians", id));
 
-      const heritageSnap = await getDocs(collection(db, "heritageItems"));
-      const batch = writeBatch(db);
-      let updatedCount = 0;
+    const heritageSnap = await getDocs(collection(db, "heritageItems"));
+    const batch = writeBatch(db);
 
-      heritageSnap.forEach((itemDoc) => {
-        const data = itemDoc.data();
-        if (data.custodianId === id) {
-          batch.update(doc(db, "heritageItems", itemDoc.id), {
-            custodianId: ""
-          });
-          updatedCount++;
-        }
-      });
-
-      if (updatedCount > 0) {
-        await batch.commit();
+    heritageSnap.forEach((itemDoc) => {
+      const data = itemDoc.data();
+      if (data.custodianId === id) {
+        batch.update(doc(db, "heritageItems", itemDoc.id), {
+          custodianId: "",
+        });
       }
+    });
 
-      setMessage("Custodian deleted.");
-      void fetchCustodians();
-    } catch (err: any) {
-      console.error(err);
-      setMessage("Error deleting custodian: " + err.message);
-    }
+    await batch.commit();
+
+    setMessage("Custodian deleted.");
+    void fetchCustodians();
   };
 
   const filteredCustodians = useMemo(() => {
     return custodians.filter((c) => {
       const q = searchText.trim().toLowerCase();
       if (!q) return true;
+
       return (
         c.name.toLowerCase().includes(q) ||
         c.type.toLowerCase().includes(q) ||
-        c.address.toLowerCase().includes(q) ||
-        c.contactEmail.toLowerCase().includes(q)
+        (c.address || "").toLowerCase().includes(q) ||
+        (c.contactEmail || "").toLowerCase().includes(q)
       );
     });
   }, [custodians, searchText]);
 
-  if (loading) return <p>Loading custodians...</p>;
+  if (loading) return <p className="text-gray-600">Loading custodians...</p>;
 
   return (
     <div>
-      <h1>Custodian Organizations</h1>
 
-      <div style={{ marginBottom: "1.5rem", display: "flex", gap: "1rem" }}>
-        <Link to="/dashboard">
-          <button>Back to Dashboard</button>
-        </Link>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-[#3E2F26]">
+          Custodian Organizations
+        </h1>
+
+        <p className="text-gray-600 mt-2">
+          Manage organizations responsible for heritage preservation.
+        </p>
+      </div>
+      
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-[#3E2F26]">
+          Custodian Organizations
+        </h1>
+        <p className="text-gray-600 mt-2">
+          Manage institutions responsible for cultural heritage preservation.
+        </p>
       </div>
 
-      <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
-        {/* Form Container */}
-        <div style={{ flex: "1 1 300px" }}>
-          <h2>Add Custodian</h2>
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+      {message && (
+        <div className="mb-6 bg-green-100 text-green-700 px-4 py-3 rounded-xl font-semibold">
+          {message}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-green-100 text-green-700 p-3 rounded-full">
+              <FaUsers />
+            </div>
+            <h2 className="text-2xl font-bold text-[#3E2F26]">
+              Add Custodian
+            </h2>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
             <input
               name="name"
               placeholder="Organization Name"
               value={formData.name}
               onChange={handleChange}
               required
-              style={{ width: "100%" }}
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
             />
 
-            <select name="type" value={formData.type} onChange={handleChange} required style={{ width: "100%" }}>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+            >
               <option value="">Select Type</option>
               <option value="Government">Government</option>
               <option value="NGO">NGO</option>
@@ -162,7 +190,7 @@ export default function Custodians() {
               placeholder="Contact Email"
               value={formData.contactEmail}
               onChange={handleChange}
-              style={{ width: "100%" }}
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
             />
 
             <input
@@ -170,7 +198,7 @@ export default function Custodians() {
               placeholder="Contact Phone"
               value={formData.contactPhone}
               onChange={handleChange}
-              style={{ width: "100%" }}
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
             />
 
             <input
@@ -178,7 +206,7 @@ export default function Custodians() {
               placeholder="Office Address"
               value={formData.address}
               onChange={handleChange}
-              style={{ width: "100%" }}
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
             />
 
             <input
@@ -186,7 +214,7 @@ export default function Custodians() {
               placeholder="Established Year"
               value={formData.establishedYear}
               onChange={handleChange}
-              style={{ width: "100%" }}
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
             />
 
             <textarea
@@ -194,63 +222,94 @@ export default function Custodians() {
               placeholder="Description"
               value={formData.description}
               onChange={handleChange}
-              style={{ width: "100%", height: "80px" }}
+              rows={4}
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
             />
 
-            <button type="submit">Save Custodian</button>
+            <button
+              type="submit"
+              className="w-full bg-[#556B2F] hover:bg-[#445523] text-white py-3 rounded-xl font-semibold shadow transition"
+            >
+              Save Custodian
+            </button>
           </form>
-          {message && <p>{message}</p>}
         </div>
 
-        {/* List Container */}
-        <div style={{ flex: "2 2 500px" }}>
-          <h2>Registered Custodians</h2>
-          <div style={{ marginBottom: "1rem" }}>
+        <div className="xl:col-span-2 bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+          <h2 className="text-2xl font-bold text-[#3E2F26] mb-5">
+            Registered Custodians
+          </h2>
+
+          <div className="flex items-center gap-3 bg-[#F8F5F0] px-4 py-3 rounded-xl mb-6">
+            <FaSearch className="text-gray-500" />
             <input
               type="text"
-              placeholder="Search custodians"
+              placeholder="Search custodians..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              style={{ width: "100%" }}
+              className="bg-transparent outline-none w-full text-gray-700"
             />
           </div>
 
-          {filteredCustodians.length === 0 ? (
-            <p>No custodian organizations found.</p>
-          ) : (
-            <table border={1} cellPadding={10} style={{ width: "100%", borderCollapse: "collapse" }}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
               <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Contact Info</th>
-                  <th>Address</th>
-                  <th>Established</th>
-                  <th>Action</th>
+                <tr className="bg-[#3E2F26] text-white">
+                  <th className="p-4 rounded-tl-xl">Name</th>
+                  <th className="p-4">Type</th>
+                  <th className="p-4">Contact</th>
+                  <th className="p-4">Address</th>
+                  <th className="p-4">Established</th>
+                  <th className="p-4 rounded-tr-xl">Action</th>
                 </tr>
               </thead>
+
               <tbody>
-                {filteredCustodians.map((c) => (
-                  <tr key={c.id}>
-                    <td>
-                      <strong>{c.name}</strong>
-                      {c.description && <div style={{ fontSize: "0.85rem", color: "#666" }}>{c.description}</div>}
-                    </td>
-                    <td>{c.type}</td>
-                    <td>
-                      <div>{c.contactEmail || "—"}</div>
-                      <div>{c.contactPhone || ""}</div>
-                    </td>
-                    <td>{c.address || "—"}</td>
-                    <td>{c.establishedYear || "—"}</td>
-                    <td>
-                      <button onClick={() => handleDelete(c.id!)}>Delete</button>
+                {filteredCustodians.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="text-center py-10 text-gray-500">
+                      No custodian organizations found.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  filteredCustodians.map((c) => (
+                    <tr
+                      key={c.id}
+                      className="border-b border-gray-100 hover:bg-[#F8F5F0] transition"
+                    >
+                      <td className="p-4">
+                        <p className="font-semibold text-[#3E2F26]">{c.name}</p>
+                        {c.description && (
+                          <p className="text-sm text-gray-500 mt-1">
+                            {c.description}
+                          </p>
+                        )}
+                      </td>
+                      <td className="p-4">
+                        <span className="px-3 py-1 rounded-full text-sm bg-green-100 text-green-700 font-semibold">
+                          {c.type}
+                        </span>
+                      </td>
+                      <td className="p-4 text-sm">
+                        <div>{c.contactEmail || "—"}</div>
+                        <div>{c.contactPhone || ""}</div>
+                      </td>
+                      <td className="p-4">{c.address || "—"}</td>
+                      <td className="p-4">{c.establishedYear || "—"}</td>
+                      <td className="p-4">
+                        <button
+                          onClick={() => handleDelete(c.id!)}
+                          className="bg-red-100 text-red-700 p-3 rounded-lg hover:bg-red-200 transition"
+                        >
+                          <FaTrash />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
-          )}
+          </div>
         </div>
       </div>
     </div>

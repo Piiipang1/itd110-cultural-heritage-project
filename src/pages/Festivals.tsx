@@ -1,8 +1,16 @@
 import { useEffect, useState, useMemo } from "react";
-import { collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, writeBatch } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  serverTimestamp,
+  writeBatch,
+} from "firebase/firestore";
 import { db, auth } from "../firebase/firebaseConfig";
-import { Link } from "react-router-dom";
 import type { Festival } from "../types/Festival";
+import { FaCalendarAlt, FaSearch, FaTrash } from "react-icons/fa";
 
 export default function Festivals() {
   const [festivals, setFestivals] = useState<Festival[]>([]);
@@ -21,13 +29,14 @@ export default function Festivals() {
   const fetchFestivals = async () => {
     try {
       const snap = await getDocs(collection(db, "festivals"));
+
       const list = snap.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Festival[];
+
       setFestivals(list);
-    } catch (err: any) {
-      console.error(err);
+    } catch {
       setMessage("Failed to fetch festivals.");
     } finally {
       setLoading(false);
@@ -38,195 +47,283 @@ export default function Festivals() {
     void fetchFestivals();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!formData.name || !formData.date || !formData.type) {
-      setMessage("Please fill in required fields (Name, Date, and Type).");
+      setMessage("Please fill in required fields.");
       return;
     }
 
-    try {
-      await addDoc(collection(db, "festivals"), {
-        ...formData,
-        createdBy: auth.currentUser?.uid,
-        createdAt: serverTimestamp(),
-      });
-      setMessage("Festival added successfully!");
-      setFormData({
-        name: "",
-        date: "",
-        location: "",
-        type: "",
-        description: "",
-      });
-      void fetchFestivals();
-    } catch (err: any) {
-      console.error(err);
-      setMessage("Error adding festival: " + err.message);
-    }
+    await addDoc(collection(db, "festivals"), {
+      ...formData,
+      createdBy: auth.currentUser?.uid,
+      createdAt: serverTimestamp(),
+    });
+
+    setMessage("Festival added successfully!");
+
+    setFormData({
+      name: "",
+      date: "",
+      location: "",
+      type: "",
+      description: "",
+    });
+
+    void fetchFestivals();
   };
 
   const handleDelete = async (id: string) => {
-    const confirmDelete = confirm(
-      "Are you sure you want to delete this festival? This will also remove the association from any linked heritage records."
-    );
+    const confirmDelete = confirm("Delete this festival?");
     if (!confirmDelete) return;
 
-    try {
-      await deleteDoc(doc(db, "festivals", id));
+    await deleteDoc(doc(db, "festivals", id));
 
-      const heritageSnap = await getDocs(collection(db, "heritageItems"));
-      const batch = writeBatch(db);
-      let updatedCount = 0;
+    const heritageSnap = await getDocs(collection(db, "heritageItems"));
+    const batch = writeBatch(db);
 
-      heritageSnap.forEach((itemDoc) => {
-        const data = itemDoc.data();
-        if (Array.isArray(data.festivalIds) && data.festivalIds.includes(id)) {
-          const newFestivalIds = data.festivalIds.filter((fid: string) => fid !== id);
-          batch.update(doc(db, "heritageItems", itemDoc.id), {
-            festivalIds: newFestivalIds
-          });
-          updatedCount++;
-        }
-      });
+    heritageSnap.forEach((itemDoc) => {
+      const data = itemDoc.data();
 
-      if (updatedCount > 0) {
-        await batch.commit();
+      if (
+        Array.isArray(data.festivalIds) &&
+        data.festivalIds.includes(id)
+      ) {
+        const newFestivalIds = data.festivalIds.filter(
+          (fid: string) => fid !== id
+        );
+
+        batch.update(doc(db, "heritageItems", itemDoc.id), {
+          festivalIds: newFestivalIds,
+        });
       }
+    });
 
-      setMessage("Festival deleted.");
-      void fetchFestivals();
-    } catch (err: any) {
-      console.error(err);
-      setMessage("Error deleting festival: " + err.message);
-    }
+    await batch.commit();
+
+    setMessage("Festival deleted.");
+    void fetchFestivals();
   };
 
   const filteredFestivals = useMemo(() => {
     return festivals.filter((f) => {
       const q = searchText.trim().toLowerCase();
+
       if (!q) return true;
+
       return (
         f.name.toLowerCase().includes(q) ||
-        f.type.toLowerCase().includes(q) ||
         f.location.toLowerCase().includes(q) ||
+        f.type.toLowerCase().includes(q) ||
         f.date.toLowerCase().includes(q)
       );
     });
   }, [festivals, searchText]);
 
-  if (loading) return <p>Loading festivals...</p>;
+  if (loading) {
+    return <p className="text-gray-600">Loading festivals...</p>;
+  }
 
   return (
     <div>
-      <h1>Festivals & Events</h1>
 
-      <div style={{ marginBottom: "1.5rem", display: "flex", gap: "1rem" }}>
-        <Link to="/dashboard">
-          <button>Back to Dashboard</button>
-        </Link>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-[#3E2F26]">
+          Festivals & Events
+        </h1>
+
+        <p className="text-gray-600 mt-2">
+          Manage cultural festivals and heritage celebrations.
+        </p>
       </div>
 
-      <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
-        {/* Form Container */}
-        <div style={{ flex: "1 1 300px" }}>
-          <h2>Add Festival/Event</h2>
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-[#3E2F26]">
+          Festivals & Events
+        </h1>
+
+        <p className="text-gray-600 mt-2">
+          Manage cultural festivals and heritage events.
+        </p>
+      </div>
+
+      {message && (
+        <div className="mb-6 bg-green-100 text-green-700 px-4 py-3 rounded-xl font-semibold">
+          {message}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+        {/* FORM */}
+        <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-orange-100 text-orange-700 p-3 rounded-full">
+              <FaCalendarAlt />
+            </div>
+
+            <h2 className="text-2xl font-bold text-[#3E2F26]">
+              Add Festival
+            </h2>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+
             <input
               name="name"
-              placeholder="Event Name"
+              placeholder="Festival Name"
               value={formData.name}
               onChange={handleChange}
               required
-              style={{ width: "100%" }}
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
             />
 
             <input
+              type="date"
               name="date"
-              placeholder="Date / Occurrence"
               value={formData.date}
               onChange={handleChange}
               required
-              style={{ width: "100%" }}
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
             />
 
-            <select name="type" value={formData.type} onChange={handleChange} required style={{ width: "100%" }}>
+            <input
+              name="location"
+              placeholder="Festival Location"
+              value={formData.location}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+            />
+
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+            >
               <option value="">Select Type</option>
               <option value="Religious">Religious</option>
               <option value="Cultural">Cultural</option>
               <option value="Historical">Historical</option>
-              <option value="Seasonal">Seasonal</option>
+              <option value="Community">Community</option>
             </select>
-
-            <input
-              name="location"
-              placeholder="Location/Venue"
-              value={formData.location}
-              onChange={handleChange}
-              style={{ width: "100%" }}
-            />
 
             <textarea
               name="description"
-              placeholder="Description"
+              placeholder="Festival Description"
               value={formData.description}
               onChange={handleChange}
-              style={{ width: "100%", height: "80px" }}
+              rows={4}
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
             />
 
-            <button type="submit">Save Festival</button>
+            <button
+              type="submit"
+              className="w-full bg-[#556B2F] hover:bg-[#445523] text-white py-3 rounded-xl font-semibold shadow transition"
+            >
+              Save Festival
+            </button>
           </form>
-          {message && <p>{message}</p>}
         </div>
 
-        {/* List Container */}
-        <div style={{ flex: "2 2 500px" }}>
-          <h2>Registered Festivals & Events</h2>
-          <div style={{ marginBottom: "1rem" }}>
+        {/* TABLE */}
+        <div className="xl:col-span-2 bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+
+          <h2 className="text-2xl font-bold text-[#3E2F26] mb-5">
+            Registered Festivals
+          </h2>
+
+          <div className="flex items-center gap-3 bg-[#F8F5F0] px-4 py-3 rounded-xl mb-6">
+            <FaSearch className="text-gray-500" />
+
             <input
               type="text"
-              placeholder="Search festivals"
+              placeholder="Search festivals..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              style={{ width: "100%" }}
+              className="bg-transparent outline-none w-full text-gray-700"
             />
           </div>
 
-          {filteredFestivals.length === 0 ? (
-            <p>No festivals or events found.</p>
-          ) : (
-            <table border={1} cellPadding={10} style={{ width: "100%", borderCollapse: "collapse" }}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+
               <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Date / Occurrence</th>
-                  <th>Location</th>
-                  <th>Action</th>
+                <tr className="bg-[#3E2F26] text-white">
+                  <th className="p-4 rounded-tl-xl">Festival</th>
+                  <th className="p-4">Date</th>
+                  <th className="p-4">Location</th>
+                  <th className="p-4">Type</th>
+                  <th className="p-4 rounded-tr-xl">Action</th>
                 </tr>
               </thead>
+
               <tbody>
-                {filteredFestivals.map((f) => (
-                  <tr key={f.id}>
-                    <td>
-                      <strong>{f.name}</strong>
-                      {f.description && <div style={{ fontSize: "0.85rem", color: "#666" }}>{f.description}</div>}
-                    </td>
-                    <td>{f.type}</td>
-                    <td>{f.date}</td>
-                    <td>{f.location || "—"}</td>
-                    <td>
-                      <button onClick={() => handleDelete(f.id!)}>Delete</button>
+                {filteredFestivals.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="text-center py-10 text-gray-500"
+                    >
+                      No festivals found.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  filteredFestivals.map((festival) => (
+                    <tr
+                      key={festival.id}
+                      className="border-b border-gray-100 hover:bg-[#F8F5F0] transition"
+                    >
+                      <td className="p-4">
+                        <p className="font-semibold text-[#3E2F26]">
+                          {festival.name}
+                        </p>
+
+                        {festival.description && (
+                          <p className="text-sm text-gray-500 mt-1">
+                            {festival.description}
+                          </p>
+                        )}
+                      </td>
+
+                      <td className="p-4">{festival.date}</td>
+
+                      <td className="p-4">
+                        {festival.location || "—"}
+                      </td>
+
+                      <td className="p-4">
+                        <span className="px-3 py-1 rounded-full text-sm bg-orange-100 text-orange-700 font-semibold">
+                          {festival.type}
+                        </span>
+                      </td>
+
+                      <td className="p-4">
+                        <button
+                          onClick={() => handleDelete(festival.id!)}
+                          className="bg-red-100 text-red-700 p-3 rounded-lg hover:bg-red-200 transition"
+                        >
+                          <FaTrash />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
+
             </table>
-          )}
+          </div>
         </div>
       </div>
     </div>

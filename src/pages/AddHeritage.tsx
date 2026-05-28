@@ -1,236 +1,275 @@
-import { useState, useEffect } from "react";
-import { addDoc, collection, getDocs, serverTimestamp } from "firebase/firestore";
-import { db, auth } from "../firebase/firebaseConfig";
-import { useNavigate, Link } from "react-router-dom";
-import type { Custodian } from "../types/Custodian";
-import type { Festival } from "../types/Festival";
-import type { HeritageItem } from "../types/HeritageItem";
+import { useState } from "react";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "../firebase/firebaseConfig";
+import { useNavigate } from "react-router-dom";
 
 function AddHeritage() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        name: "",
-        type: "",
-        province: "",
-        municipality: "",
-        latitude: "",
-        longitude: "",
-        description: "",
-        culturalSignificance: "",
-        preservationStatus: "",
-        imageUrl: "",
-        custodianId: "",
-        festivalIds: [] as string[],
-        relatedHeritageIds: [] as string[],
+  const [formData, setFormData] = useState({
+    name: "",
+    type: "",
+    province: "",
+    municipality: "",
+    latitude: "",
+    longitude: "",
+    description: "",
+    culturalSignificance: "",
+    preservationStatus: "",
+    imageUrl: "",
+  });
+
+  const [message, setMessage] = useState("");
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
     });
+  };
 
-    const [custodians, setCustodians] = useState<Custodian[]>([]);
-    const [festivals, setFestivals] = useState<Festival[]>([]);
-    const [heritageItems, setHeritageItems] = useState<HeritageItem[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [message, setMessage] = useState("");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    useEffect(() => {
-        const loadData = async () => {
-            try {
-                const custSnap = await getDocs(collection(db, "custodians"));
-                const festSnap = await getDocs(collection(db, "festivals"));
-                const itemsSnap = await getDocs(collection(db, "heritageItems"));
+    try {
+      await addDoc(collection(db, "heritageItems"), {
+        ...formData,
+        createdBy: auth.currentUser?.uid,
+        createdAt: serverTimestamp(),
+      });
 
-                setCustodians(custSnap.docs.map(d => ({ id: d.id, ...d.data() })) as Custodian[]);
-                setFestivals(festSnap.docs.map(d => ({ id: d.id, ...d.data() })) as Festival[]);
-                setHeritageItems(itemsSnap.docs.map(d => ({ id: d.id, ...d.data() })) as HeritageItem[]);
-            } catch (err) {
-                console.error("Error loading relations:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        void loadData();
-    }, []);
+      setMessage("Heritage record added successfully!");
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value});
-    };
+      setTimeout(() => {
+        navigate("/heritage-records");
+      }, 1000);
+    } catch (error: any) {
+      setMessage(error.message);
+    }
+  };
 
-    const handleFestivalToggle = (id: string) => {
-        const list = formData.festivalIds.includes(id)
-            ? formData.festivalIds.filter(fid => fid !== id)
-            : [...formData.festivalIds, id];
-        setFormData({ ...formData, festivalIds: list });
-    };
+  return (
+    <div>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-[#3E2F26]">
+          Add Heritage Record
+        </h1>
+        <p className="text-gray-600 mt-2">
+          Register a new cultural heritage item in the system.
+        </p>
+      </div>
 
-    const handleRelatedToggle = (id: string) => {
-        const list = formData.relatedHeritageIds.includes(id)
-            ? formData.relatedHeritageIds.filter(rid => rid !== id)
-            : [...formData.relatedHeritageIds, id];
-        setFormData({ ...formData, relatedHeritageIds: list });
-    };
+      <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
+        {message && (
+          <div className="mb-6 bg-green-100 text-green-700 px-4 py-3 rounded-xl font-semibold">
+            {message}
+          </div>
+        )}
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div>
+            <h2 className="text-xl font-bold text-[#3E2F26] mb-4">
+              Basic Information
+            </h2>
 
-        try {
-            await addDoc(collection(db, "heritageItems"), {
-                ...formData,
-                createdBy: auth.currentUser?.uid,
-                createdAt: serverTimestamp(),
-            });
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Heritage Name
+                </label>
+                <input
+                  name="name"
+                  placeholder="Enter heritage name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                />
+              </div>
 
-            setMessage("Heritage record added successfully!");
-            setFormData({
-                name: "",
-                type: "",
-                province: "",
-                municipality: "",
-                latitude: "",
-                longitude: "",
-                description: "",
-                culturalSignificance: "",
-                preservationStatus: "",
-                imageUrl: "",
-                custodianId: "",
-                festivalIds: [],
-                relatedHeritageIds: [],
-            });
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Heritage Type
+                </label>
+                <select
+                  name="type"
+                  value={formData.type}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                >
+                  <option value="">Select Type</option>
+                  <option value="Tangible">Tangible</option>
+                  <option value="Intangible">Intangible</option>
+                  <option value="Natural">Natural</option>
+                  <option value="Mixed">Mixed</option>
+                </select>
+              </div>
 
-            setTimeout(() => {
-                navigate("/heritage-records");
-            }, 1000);
-        } catch (error: any) {
-            setMessage(error.message);
-        }
-    };
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Province
+                </label>
+                <input
+                  name="province"
+                  placeholder="Enter province"
+                  value={formData.province}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                />
+              </div>
 
-    if (loading) return <p>Loading form relations...</p>;
-
-    return (
-        <div>
-            <h1>Add Heritage Record</h1>
-
-            <div style={{ marginBottom: "1.5rem" }}>
-                <Link to="/dashboard">
-                    <button>Back to Dashboard</button>
-                </Link>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  City/Municipality
+                </label>
+                <input
+                  name="municipality"
+                  placeholder="Enter city or municipality"
+                  value={formData.municipality}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                />
+              </div>
             </div>
+          </div>
 
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "600px" }}>
-                <label>
-                    Name *
-                    <input name="name" placeholder="Heritage Name" value={formData.name} onChange={handleChange} required style={{ width: "100%", marginTop: "0.4rem" }}/>
+          <div>
+            <h2 className="text-xl font-bold text-[#3E2F26] mb-4">
+              Location Coordinates
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Latitude
                 </label>
+                <input
+                  name="latitude"
+                  placeholder="Example: 7.9986"
+                  value={formData.latitude}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                />
+              </div>
 
-                <label>
-                    Type *
-                    <select name="type" value={formData.type} onChange={handleChange} required style={{ width: "100%", marginTop: "0.4rem" }}>
-                        <option value="">Select Type</option>
-                        <option value="Tangible">Tangible</option>
-                        <option value="Intangible">Intangible</option>
-                        <option value="Natural">Natural</option>
-                        <option value="Mixed">Mixed</option>
-                    </select>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Longitude
                 </label>
+                <input
+                  name="longitude"
+                  placeholder="Example: 124.2928"
+                  value={formData.longitude}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                />
+              </div>
+            </div>
+          </div>
 
-                <label>
-                    Province *
-                    <input name="province" placeholder="Province" value={formData.province} onChange={handleChange} required style={{ width: "100%", marginTop: "0.4rem" }}/>
+          <div>
+            <h2 className="text-xl font-bold text-[#3E2F26] mb-4">
+              Cultural Details
+            </h2>
+
+            <div className="grid grid-cols-1 gap-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Description
                 </label>
+                <textarea
+                  name="description"
+                  placeholder="Describe the heritage item"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                  rows={4}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                />
+              </div>
 
-                <label>
-                    City/Municipality *
-                    <input name="municipality" placeholder="City/Municipality" value={formData.municipality} onChange={handleChange} required style={{ width: "100%", marginTop: "0.4rem" }}/>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Cultural Significance
                 </label>
+                <textarea
+                  name="culturalSignificance"
+                  placeholder="Explain the importance of this heritage item"
+                  value={formData.culturalSignificance}
+                  onChange={handleChange}
+                  required
+                  rows={4}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                />
+              </div>
+            </div>
+          </div>
 
-                <label>
-                    Latitude
-                    <input name="latitude" placeholder="Latitude" value={formData.latitude} onChange={handleChange} style={{ width: "100%", marginTop: "0.4rem" }}/>
+          <div>
+            <h2 className="text-xl font-bold text-[#3E2F26] mb-4">
+              Status and Media
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Preservation Status
                 </label>
+                <select
+                  name="preservationStatus"
+                  value={formData.preservationStatus}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                >
+                  <option value="">Select Status</option>
+                  <option value="Good">Good</option>
+                  <option value="Needs Preservation">Needs Preservation</option>
+                  <option value="Endangered">Endangered</option>
+                  <option value="Restored">Restored</option>
+                </select>
+              </div>
 
-                <label>
-                    Longitude
-                    <input name="longitude" placeholder="Longitude" value={formData.longitude} onChange={handleChange} style={{ width: "100%", marginTop: "0.4rem" }}/>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Image URL
                 </label>
+                <input
+                  name="imageUrl"
+                  placeholder="Paste image link here"
+                  value={formData.imageUrl}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                />
+              </div>
+            </div>
+          </div>
 
-                <label>
-                    Description *
-                    <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange} required style={{ width: "100%", height: "100px", marginTop: "0.4rem" }}/>
-                </label>
+          <div className="flex justify-end gap-4 pt-4">
+            <button
+              type="button"
+              onClick={() => navigate("/heritage-records")}
+              className="px-6 py-3 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-semibold"
+            >
+              Cancel
+            </button>
 
-                <label>
-                    Cultural Significance *
-                    <textarea name="culturalSignificance" placeholder="Cultural Significance" value={formData.culturalSignificance} onChange={handleChange} required style={{ width: "100%", height: "100px", marginTop: "0.4rem" }}/>
-                </label>
-
-                <label>
-                    Preservation Status *
-                    <select name="preservationStatus" value={formData.preservationStatus} onChange={handleChange} required style={{ width: "100%", marginTop: "0.4rem" }}>
-                        <option value="">Select Preservation Status</option>
-                        <option value="Good">Good</option>
-                        <option value="Needs Preservation">Needs Preservation</option>
-                        <option value="Endangered">Endangered</option>
-                        <option value="Restored">Restored</option>
-                    </select>
-                </label>
-
-                <label>
-                    Image URL
-                    <input name="imageUrl" placeholder="Image URL" value={formData.imageUrl} onChange={handleChange} style={{ width: "100%", marginTop: "0.4rem" }}/>
-                </label>
-
-                {/* Relational Inputs */}
-                <label>
-                    Custodian Organization
-                    <select name="custodianId" value={formData.custodianId} onChange={handleChange} style={{ width: "100%", marginTop: "0.4rem" }}>
-                        <option value="">Select Custodian</option>
-                        {custodians.map(c => (
-                            <option key={c.id} value={c.id}>{c.name}</option>
-                        ))}
-                    </select>
-                </label>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                    <label>Link Festivals & Events</label>
-                    <div style={{ maxHeight: "120px", overflowY: "auto", border: "1px solid #ccc", padding: "0.5rem" }}>
-                        {festivals.length === 0 ? <p style={{ margin: 0, fontSize: "0.9rem", color: "#666" }}>No festivals available.</p> :
-                            festivals.map(f => (
-                                <label key={f.id} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: "normal", cursor: "pointer", padding: "0.2rem 0" }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.festivalIds.includes(f.id!)}
-                                        onChange={() => handleFestivalToggle(f.id!)}
-                                    />
-                                    {f.name}
-                                </label>
-                            ))
-                        }
-                    </div>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-                    <label>Link Related Heritage Items</label>
-                    <div style={{ maxHeight: "120px", overflowY: "auto", border: "1px solid #ccc", padding: "0.5rem" }}>
-                        {heritageItems.length === 0 ? <p style={{ margin: 0, fontSize: "0.9rem", color: "#666" }}>No other heritage items available.</p> :
-                            heritageItems.map(item => (
-                                <label key={item.id} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: "normal", cursor: "pointer", padding: "0.2rem 0" }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.relatedHeritageIds.includes(item.id!)}
-                                        onChange={() => handleRelatedToggle(item.id!)}
-                                    />
-                                    {item.name}
-                                </label>
-                            ))
-                        }
-                    </div>
-                </div>
-
-                <button type="submit">Save Record</button>
-            </form>
-
-            <p>{message}</p>
-        </div>
-    );
+            <button
+              type="submit"
+              className="px-6 py-3 rounded-xl bg-[#556B2F] hover:bg-[#445523] text-white font-semibold shadow transition"
+            >
+              Save Record
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
 
 export default AddHeritage;
