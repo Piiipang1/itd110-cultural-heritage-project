@@ -35,20 +35,20 @@ function Dashboard() {
   return (
     <div>
       <div className="mb-10">
-        <h1 className="text-4xl font-bold text-[#3E2F26]">
+        <h1 className="text-4xl font-bold text-[#3E2F26] dark:text-slate-100">
           Cultural Heritage Dashboard
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-gray-600 dark:text-slate-300 mt-2">
           Manage heritage records, custodians, festivals, and reports.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-md border border-gray-100 dark:border-slate-700">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-gray-500 text-sm">Heritage Records</p>
-              <h2 className="text-4xl font-bold text-[#3E2F26] mt-2">
+              <p className="text-gray-500 dark:text-slate-400 text-sm">Heritage Records</p>
+              <h2 className="text-4xl font-bold text-[#3E2F26] dark:text-slate-100 mt-2">
                 {totalHeritage}
               </h2>
             </div>
@@ -58,11 +58,11 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-md border border-gray-100 dark:border-slate-700">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-gray-500 text-sm">Custodians</p>
-              <h2 className="text-4xl font-bold text-[#3E2F26] mt-2">
+              <p className="text-gray-500 dark:text-slate-400 text-sm">Custodians</p>
+              <h2 className="text-4xl font-bold text-[#3E2F26] dark:text-slate-100 mt-2">
                 {totalCustodians}
               </h2>
             </div>
@@ -72,11 +72,11 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-md border border-gray-100 dark:border-slate-700">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-gray-500 text-sm">Festivals</p>
-              <h2 className="text-4xl font-bold text-[#3E2F26] mt-2">
+              <p className="text-gray-500 dark:text-slate-400 text-sm">Festivals</p>
+              <h2 className="text-4xl font-bold text-[#3E2F26] dark:text-slate-100 mt-2">
                 {totalFestivals}
               </h2>
             </div>
@@ -86,11 +86,11 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-md border border-gray-100 dark:border-slate-700">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-gray-500 text-sm">Endangered</p>
-              <h2 className="text-4xl font-bold text-[#3E2F26] mt-2">
+              <p className="text-gray-500 dark:text-slate-400 text-sm">Endangered</p>
+              <h2 className="text-4xl font-bold text-[#3E2F26] dark:text-slate-100 mt-2">
                 {endangeredCount}
               </h2>
             </div>
@@ -101,8 +101,8 @@ function Dashboard() {
         </div>
       </div>
 
-      <div className="mt-10 bg-white rounded-2xl p-6 shadow-md border border-gray-100">
-        <h2 className="text-2xl font-bold text-[#3E2F26] mb-6">
+      <div className="mt-10 bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-md border border-gray-100 dark:border-slate-700">
+        <h2 className="text-2xl font-bold text-[#3E2F26] dark:text-slate-100 mb-6">
           Quick Actions
         </h2>
 

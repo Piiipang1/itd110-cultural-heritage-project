@@ -82,15 +82,15 @@ function EditHeritage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-[#3E2F26]">
+        <h1 className="text-4xl font-bold text-[#3E2F26] dark:text-slate-100">
           Edit Heritage Record
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-gray-600 dark:text-slate-300 mt-2">
           Update cultural heritage information and preservation details.
         </p>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-gray-100 dark:border-slate-700 p-8">
         {message && (
           <div className="mb-6 bg-green-100 text-green-700 px-4 py-3 rounded-xl font-semibold">
             {message}
@@ -99,13 +99,13 @@ function EditHeritage() {
 
         <form onSubmit={handleUpdate} className="space-y-8">
           <div>
-            <h2 className="text-xl font-bold text-[#3E2F26] mb-4">
+            <h2 className="text-xl font-bold text-[#3E2F26] dark:text-slate-100 mb-4">
               Basic Information
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">
                   Heritage Name
                 </label>
                 <input
@@ -114,12 +114,12 @@ function EditHeritage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">
                   Heritage Type
                 </label>
                 <select
@@ -127,7 +127,7 @@ function EditHeritage() {
                   value={formData.type}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
                 >
                   <option value="">Select Type</option>
                   <option value="Tangible">Tangible</option>
@@ -138,7 +138,7 @@ function EditHeritage() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">
                   Province
                 </label>
                 <input
@@ -147,12 +147,12 @@ function EditHeritage() {
                   value={formData.province}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">
                   City/Municipality
                 </label>
                 <input
@@ -161,20 +161,20 @@ function EditHeritage() {
                   value={formData.municipality}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
                 />
               </div>
             </div>
           </div>
 
           <div>
-            <h2 className="text-xl font-bold text-[#3E2F26] mb-4">
+            <h2 className="text-xl font-bold text-[#3E2F26] dark:text-slate-100 mb-4">
               Location Coordinates
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">
                   Latitude
                 </label>
                 <input
@@ -182,12 +182,12 @@ function EditHeritage() {
                   placeholder="Example: 7.9986"
                   value={formData.latitude}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">
                   Longitude
                 </label>
                 <input
@@ -195,20 +195,20 @@ function EditHeritage() {
                   placeholder="Example: 124.2928"
                   value={formData.longitude}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
                 />
               </div>
             </div>
           </div>
 
           <div>
-            <h2 className="text-xl font-bold text-[#3E2F26] mb-4">
+            <h2 className="text-xl font-bold text-[#3E2F26] dark:text-slate-100 mb-4">
               Cultural Details
             </h2>
 
             <div className="grid grid-cols-1 gap-5">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">
                   Description
                 </label>
                 <textarea
@@ -218,12 +218,12 @@ function EditHeritage() {
                   onChange={handleChange}
                   required
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">
                   Cultural Significance
                 </label>
                 <textarea
@@ -233,20 +233,20 @@ function EditHeritage() {
                   onChange={handleChange}
                   required
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
                 />
               </div>
             </div>
           </div>
 
           <div>
-            <h2 className="text-xl font-bold text-[#3E2F26] mb-4">
+            <h2 className="text-xl font-bold text-[#3E2F26] dark:text-slate-100 mb-4">
               Status and Media
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">
                   Preservation Status
                 </label>
                 <select
@@ -254,7 +254,7 @@ function EditHeritage() {
                   value={formData.preservationStatus}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
                 >
                   <option value="">Select Status</option>
                   <option value="Good">Good</option>
@@ -265,7 +265,7 @@ function EditHeritage() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">
                   Image URL
                 </label>
                 <input
@@ -273,7 +273,7 @@ function EditHeritage() {
                   placeholder="Paste image link here"
                   value={formData.imageUrl}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
                 />
               </div>
             </div>
@@ -283,7 +283,7 @@ function EditHeritage() {
             <button
               type="button"
               onClick={() => navigate("/heritage-records")}
-              className="px-6 py-3 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-semibold"
+              className="px-6 py-3 rounded-xl border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition font-semibold"
             >
               Cancel
             </button>

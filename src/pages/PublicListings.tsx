@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import type { HeritageItem } from "../types/HeritageItem";
 import type { Custodian } from "../types/Custodian";
 import type { Festival } from "../types/Festival";
+import DarkModeToggle from "../components/DarkModeToggle";
 import "./PublicListings.css";
 
 export default function PublicListings() {
@@ -142,14 +143,18 @@ export default function PublicListings() {
     : [];
 
   return (
-    <div className="public-listings-container">
-      {/* Header */}
+    <div className="min-h-screen bg-[#FDFBF8] dark:bg-slate-900 transition-colors duration-200">
+      <div className="public-listings-container">
+        {/* Header */}
       <header className="public-header">
         <div>
           <h1>🏛️ Cultural Heritage Registry</h1>
           <p style={{ margin: "0.2rem 0 0 0" }}>Public Repository of Heritage Sites, Custodians & Festivals</p>
         </div>
         <div className="header-actions">
+          <div style={{ display: "flex", alignItems: "center", marginRight: "1rem" }}>
+            <DarkModeToggle />
+          </div>
           <Link to="/reports" className="btn-nav">
             📊 Reports & Analytics
           </Link>
@@ -403,6 +408,7 @@ export default function PublicListings() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }

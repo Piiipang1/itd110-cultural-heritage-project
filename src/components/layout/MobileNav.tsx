@@ -6,7 +6,7 @@ function MobileNav() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="lg:hidden bg-[#3E2F26] text-white p-4 shadow-md">
+    <div className="lg:hidden bg-[#3E2F26] dark:bg-slate-950 text-white p-4 shadow-md transition-colors duration-200">
       <div className="flex justify-between items-center">
         <h1 className="font-bold text-[#F4D58D]">Heritage DB</h1>
 
