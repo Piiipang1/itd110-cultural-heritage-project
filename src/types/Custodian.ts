@@ -1,4 +1,6 @@
-import type { Timestamp } from "firebase/firestore";`r`n`r`nexport type Custodian = {
+import type { Timestamp } from "firebase/firestore";
+
+export type Custodian = {
     id?: string;
     name: string;
     type: string; // e.g. Government, NGO, Private, Community

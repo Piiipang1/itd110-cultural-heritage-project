@@ -1,4 +1,6 @@
-import type { Timestamp } from "firebase/firestore";`r`n`r`nexport type HeritageItem = {
+import type { Timestamp } from "firebase/firestore";
+
+export type HeritageItem = {
     id?: string;
     name: string;
     type: string;

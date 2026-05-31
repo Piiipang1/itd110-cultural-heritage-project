@@ -44,7 +44,13 @@ export default function Custodians() {
     }
   };
 
-  useEffect(() => {`r`n    const timeoutId = window.setTimeout(() => {`r`n      void fetchCustodians();`r`n    }, 0);`r`n`r`n    return () => window.clearTimeout(timeoutId);`r`n  }, []);
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchCustodians();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>

@@ -1,4 +1,6 @@
-import type { Timestamp } from "firebase/firestore";`r`n`r`nexport type Festival = {
+import type { Timestamp } from "firebase/firestore";
+
+export type Festival = {
     id?: string;
     name: string;
     date: string;

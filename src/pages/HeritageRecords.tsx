@@ -34,7 +34,13 @@ function HeritageRecords() {
     void fetchRecords();
   };
 
-  useEffect(() => {`r`n    const timeoutId = window.setTimeout(() => {`r`n      void fetchRecords();`r`n    }, 0);`r`n`r`n    return () => window.clearTimeout(timeoutId);`r`n  }, []);
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchRecords();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   const filteredRecords = records.filter((record) => {
     const query = searchText.toLowerCase();

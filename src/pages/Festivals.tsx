@@ -43,7 +43,13 @@ export default function Festivals() {
     }
   };
 
-  useEffect(() => {`r`n    const timeoutId = window.setTimeout(() => {`r`n      void fetchFestivals();`r`n    }, 0);`r`n`r`n    return () => window.clearTimeout(timeoutId);`r`n  }, []);
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchFestivals();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
