@@ -1,5 +1,11 @@
 /* Public Listings Styling */
 
+.public-page-shell {
+  min-height: 100vh;
+  background: #FDFBF8;
+  transition: background-color 0.2s ease-in-out;
+}
+
 .public-listings-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -26,9 +32,16 @@
   margin: 0;
 }
 
+.public-subtitle {
+  color: #7a6b57;
+  margin: 0.2rem 0 0 0;
+}
+
 .header-actions {
   display: flex;
+  align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .btn-nav {
@@ -282,6 +295,11 @@
   color: #0288d1;
 }
 
+.badge-tag.location-badge {
+  background: #F8F5F0;
+  color: #7a6b57;
+}
+
 .card-description {
   font-size: 0.9rem;
   line-height: 1.5;
@@ -512,6 +530,12 @@
   color: #3E2F26;
 }
 
+.custodian-description {
+  font-size: 0.9rem;
+  color: #5A4A40;
+  margin: 0.2rem 0 0.8rem 0;
+}
+
 .custodian-meta {
   font-size: 0.85rem;
   color: #7a6b57;
@@ -549,6 +573,12 @@
   font-weight: 600;
 }
 
+.festival-description {
+  font-size: 0.85rem;
+  color: #7a6b57;
+  margin-top: 0.25rem;
+}
+
 .related-items-list {
   display: flex;
   flex-wrap: wrap;
@@ -566,8 +596,10 @@
 }
 
 /* Dark Mode Overrides */
+html.dark .public-page-shell { background: #0f172a; }
 html.dark .public-listings-container { color: #f1f5f9; }
 html.dark .public-header h1 { color: #f1f5f9; }
+html.dark .public-subtitle { color: #cbd5e1; }
 html.dark .public-header { border-bottom-color: rgba(255, 255, 255, 0.15); }
 html.dark .btn-nav { background: #1e293b; color: #f1f5f9; border-color: #334155; }
 html.dark .btn-nav:hover { background: #334155; }
@@ -584,6 +616,7 @@ html.dark .card-image-wrapper { background: #0f172a; }
 html.dark .card-content h3 { color: #f1f5f9; }
 html.dark .location-tag { color: #94a3b8; }
 html.dark .card-description { color: #cbd5e1; }
+html.dark .badge-tag.location-badge { background: #334155; color: #cbd5e1; border-color: #475569; }
 html.dark .btn-card { background: #334155; border-color: #475569; color: #f1f5f9; }
 html.dark .btn-card:hover { background: #C8A96B; color: white; border-color: #C8A96B; }
 html.dark .empty-listing { background: #1e293b; border-color: #334155; color: #cbd5e1; }
@@ -602,8 +635,10 @@ html.dark .coord-item strong { color: #f1f5f9; }
 html.dark .relational-box { background: #0f172a; border-color: rgba(200, 169, 107, 0.2); }
 html.dark .relational-box h4 { color: #f1f5f9; }
 html.dark .custodian-name { color: #f1f5f9; }
+html.dark .custodian-description { color: #cbd5e1; }
 html.dark .custodian-meta { color: #94a3b8; }
 html.dark .festival-item { border-bottom-color: #334155; }
 html.dark .festival-name { color: #f1f5f9; }
 html.dark .festival-date-loc { color: #C8A96B; }
+html.dark .festival-description { color: #cbd5e1; }
 html.dark .related-item-badge { background-color: #334155; border-color: #475569; color: #a3e635; }

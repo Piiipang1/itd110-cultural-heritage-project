@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import type { HeritageItem } from "../types/HeritageItem";
 import type { Custodian } from "../types/Custodian";
 import type { Festival } from "../types/Festival";
+import DarkModeToggle from "../components/DarkModeToggle";
 import "./PublicListings.css";
 
 export default function PublicListings() {
@@ -142,14 +143,16 @@ export default function PublicListings() {
     : [];
 
   return (
+    <div className="public-page-shell">
     <div className="public-listings-container">
       {/* Header */}
       <header className="public-header">
         <div>
           <h1>🏛️ Cultural Heritage Registry</h1>
-          <p style={{ margin: "0.2rem 0 0 0" }}>Public Repository of Heritage Sites, Custodians & Festivals</p>
+          <p className="public-subtitle">Public Repository of Heritage Sites, Custodians & Festivals</p>
         </div>
         <div className="header-actions">
+          <DarkModeToggle />
           <Link to="/reports" className="btn-nav">
             📊 Reports & Analytics
           </Link>
@@ -314,7 +317,7 @@ export default function PublicListings() {
                   <span className={`badge-tag status-${selectedItem.preservationStatus?.toLowerCase().replace(/\s+/g, "-")}`}>
                     {selectedItem.preservationStatus}
                   </span>
-                  <span className="badge-tag" style={{ background: "#F8F5F0", color: "#7a6b57" }}>
+                  <span className="badge-tag location-badge">
                     📍 {selectedItem.municipality}, {selectedItem.province}
                   </span>
                 </div>
@@ -362,7 +365,7 @@ export default function PublicListings() {
                   <h4>🛡️ Preservation Custodian</h4>
                   <div className="custodian-detail">
                     <span className="custodian-name">{selectedCustodian.name}</span>
-                    <p style={{ fontSize: "0.9rem", color: "#5A4A40", margin: "0.2rem 0 0.8rem 0" }}>
+                    <p className="custodian-description">
                       {selectedCustodian.description || "Custodian organization dedicated to local preservation."}
                     </p>
                     <div className="custodian-meta">
@@ -392,7 +395,7 @@ export default function PublicListings() {
                           📅 {fest.date} | 📍 {fest.location} ({fest.type})
                         </div>
                         {fest.description && (
-                          <p style={{ fontSize: "0.85rem", color: "#7a6b57", marginTop: "0.25rem" }}>
+                          <p className="festival-description">
                             {fest.description}
                           </p>
                         )}
@@ -419,6 +422,7 @@ export default function PublicListings() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
