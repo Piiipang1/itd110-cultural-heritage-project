@@ -138,21 +138,21 @@ export default function Festivals() {
     <div>
 
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-[#3E2F26]">
+        <h1 className="text-4xl font-bold text-[#3E2F26] dark:text-slate-100">
           Festivals & Events
         </h1>
 
-        <p className="text-gray-600 mt-2">
+        <p className="text-gray-600 dark:text-slate-300 mt-2">
           Manage cultural festivals and heritage celebrations.
         </p>
       </div>
 
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-[#3E2F26]">
+        <h1 className="text-4xl font-bold text-[#3E2F26] dark:text-slate-100">
           Festivals & Events
         </h1>
 
-        <p className="text-gray-600 mt-2">
+        <p className="text-gray-600 dark:text-slate-300 mt-2">
           Manage cultural festivals and heritage events.
         </p>
       </div>
@@ -166,13 +166,13 @@ export default function Festivals() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
 
         {/* FORM */}
-        <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-gray-100 dark:border-slate-700 p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="bg-orange-100 text-orange-700 p-3 rounded-full">
+            <div className="bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-400 p-3 rounded-full">
               <FaCalendarAlt />
             </div>
 
-            <h2 className="text-2xl font-bold text-[#3E2F26]">
+            <h2 className="text-2xl font-bold text-[#3E2F26] dark:text-slate-100">
               Add Festival
             </h2>
           </div>
@@ -185,7 +185,7 @@ export default function Festivals() {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
             />
 
             <input
@@ -194,7 +194,7 @@ export default function Festivals() {
               value={formData.date}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
             />
 
             <input
@@ -202,7 +202,7 @@ export default function Festivals() {
               placeholder="Festival Location"
               value={formData.location}
               onChange={handleChange}
-              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
             />
 
             <select
@@ -210,7 +210,7 @@ export default function Festivals() {
               value={formData.type}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
             >
               <option value="">Select Type</option>
               <option value="Religious">Religious</option>
@@ -225,7 +225,7 @@ export default function Festivals() {
               value={formData.description}
               onChange={handleChange}
               rows={4}
-              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-[#556B2F] outline-none"
             />
 
             <button
@@ -238,21 +238,21 @@ export default function Festivals() {
         </div>
 
         {/* TABLE */}
-        <div className="xl:col-span-2 bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+        <div className="xl:col-span-2 bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-gray-100 dark:border-slate-700 p-6">
 
-          <h2 className="text-2xl font-bold text-[#3E2F26] mb-5">
+          <h2 className="text-2xl font-bold text-[#3E2F26] dark:text-slate-100 mb-5">
             Registered Festivals
           </h2>
 
-          <div className="flex items-center gap-3 bg-[#F8F5F0] px-4 py-3 rounded-xl mb-6">
-            <FaSearch className="text-gray-500" />
+          <div className="flex items-center gap-3 bg-[#F8F5F0] dark:bg-slate-700 px-4 py-3 rounded-xl mb-6">
+            <FaSearch className="text-gray-500 dark:text-slate-400" />
 
             <input
               type="text"
               placeholder="Search festivals..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              className="bg-transparent outline-none w-full text-gray-700"
+              className="bg-transparent outline-none w-full text-gray-700 dark:text-slate-200"
             />
           </div>
 
@@ -260,7 +260,7 @@ export default function Festivals() {
             <table className="w-full text-left">
 
               <thead>
-                <tr className="bg-[#3E2F26] text-white">
+                <tr className="bg-[#3E2F26] dark:bg-slate-900 text-white">
                   <th className="p-4 rounded-tl-xl">Festival</th>
                   <th className="p-4">Date</th>
                   <th className="p-4">Location</th>
@@ -274,7 +274,7 @@ export default function Festivals() {
                   <tr>
                     <td
                       colSpan={5}
-                      className="text-center py-10 text-gray-500"
+                      className="text-center py-10 text-gray-500 dark:text-slate-400"
                     >
                       No festivals found.
                     </td>
@@ -283,15 +283,15 @@ export default function Festivals() {
                   filteredFestivals.map((festival) => (
                     <tr
                       key={festival.id}
-                      className="border-b border-gray-100 hover:bg-[#F8F5F0] transition"
+                      className="border-b border-gray-100 dark:border-slate-700 hover:bg-[#F8F5F0] dark:hover:bg-slate-700/50 transition"
                     >
                       <td className="p-4">
-                        <p className="font-semibold text-[#3E2F26]">
+                        <p className="font-semibold text-[#3E2F26] dark:text-slate-100">
                           {festival.name}
                         </p>
 
                         {festival.description && (
-                          <p className="text-sm text-gray-500 mt-1">
+                          <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
                             {festival.description}
                           </p>
                         )}

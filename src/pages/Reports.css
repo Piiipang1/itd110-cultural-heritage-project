@@ -279,6 +279,80 @@
   cursor: pointer;
 }
 
+/* Dark Mode Overrides */
+html.dark .reports-container {
+  color: #f1f5f9;
+}
+html.dark .reports-header h1 {
+  color: #f1f5f9;
+}
+html.dark .reports-header {
+  border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+html.dark .metric-card,
+html.dark .report-section-card,
+html.dark .reports-table-wrapper {
+  background: #1e293b;
+  border-color: #334155;
+}
+html.dark .metric-label,
+html.dark .tab-btn {
+  color: #94a3b8;
+}
+html.dark .tab-btn:hover {
+  color: #f1f5f9;
+}
+html.dark .tab-btn.active {
+  color: #556B2F;
+}
+html.dark .metric-value,
+html.dark .report-section-card h3 {
+  color: #f1f5f9;
+}
+html.dark .report-section-card h3 {
+  border-bottom-color: #334155;
+}
+html.dark .reports-table {
+  background: transparent;
+}
+html.dark .reports-table th {
+  background: linear-gradient(90deg, #0f172a, #1e293b);
+  color: #f1f5f9;
+}
+html.dark .reports-table td {
+  color: #cbd5e1;
+  border-bottom-color: #334155;
+}
+html.dark .reports-table tbody tr:hover {
+  background-color: #334155;
+}
+html.dark .category-bar-label {
+  color: #cbd5e1;
+}
+html.dark .progress-bar-bg {
+  background-color: #334155;
+}
+html.dark .region-list-item {
+  border-bottom-color: #334155;
+}
+html.dark .region-name {
+  color: #cbd5e1;
+}
+html.dark .region-count {
+  background-color: #334155;
+  color: #a3e635;
+}
+html.dark .columns-toggle-section {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+html.dark .columns-toggle-title {
+  color: #94a3b8;
+}
+html.dark .columns-toggle-grid label {
+  color: #cbd5e1;
+}
+
 /* Print View Styling overrides */
 @media print {
   body {

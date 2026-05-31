@@ -23,7 +23,7 @@ function Sidebar() {
     }`;
 
   return (
-    <aside className="hidden lg:block w-64 min-h-screen bg-[#3E2F26] text-white fixed left-0 top-0 p-6 shadow-xl">
+    <aside className="hidden lg:block w-64 min-h-screen bg-[#3E2F26] dark:bg-slate-950 text-white fixed left-0 top-0 p-6 shadow-xl transition-colors duration-200">
       <div className="mb-10 border-b border-white/20 pb-4">
         <h1 className="text-2xl font-bold text-[#F4D58D]">Heritage DB</h1>
         <p className="text-sm text-gray-300 mt-1">Cultural Registry System</p>
